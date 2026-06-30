@@ -1,7 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { X, Minus, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CheckoutModal } from '@/components/CheckoutModal'
 
 interface CartItem {
   id: string
@@ -27,9 +29,14 @@ export function CartDrawer({
   onUpdateQuantity,
   onRemoveItem,
 }: CartDrawerProps) {
+  const [checkoutOpen, setCheckoutOpen] = useState(false)
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const tax = subtotal * 0.1
   const total = subtotal + tax
+
+  const handleCheckoutClick = () => {
+    setCheckoutOpen(true)
+  }
 
   return (
     <>
@@ -149,6 +156,7 @@ export function CartDrawer({
           )}
 
           <Button
+            onClick={handleCheckoutClick}
             className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
             disabled={items.length === 0}
           >
@@ -156,6 +164,12 @@ export function CartDrawer({
           </Button>
         </div>
       </div>
+
+      <CheckoutModal
+        isOpen={checkoutOpen}
+        onClose={() => setCheckoutOpen(false)}
+        items={items}
+      />
     </>
   )
 }

@@ -92,7 +92,7 @@ export function CheckoutModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl bg-surface border-border">
+      <DialogContent className="max-w-4xl bg-[#0a0a0a] border-zinc-800 text-white p-0 overflow-hidden">
         <DialogHeader className="border-b border-border pb-4">
           <div className="flex items-center gap-2">
             <Lock size={20} className="text-primary" />

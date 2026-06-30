@@ -50,7 +50,7 @@ export function CartDrawer({
 
       {/* Drawer */}
       <div
-        className={`fixed right-0 top-0 h-full w-full max-w-md bg-surface border-l border-border shadow-2xl z-50 transition-transform duration-300 flex flex-col ${
+        className={`fixed right-0 top-0 h-full w-full max-w-md bg-[#0a0a0a] border-l border-zinc-800 shadow-2xl z-50 transition-transform duration-300 flex flex-col ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >

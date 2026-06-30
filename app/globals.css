@@ -167,3 +167,14 @@
     @apply font-sans;
   }
 }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+/* Tạo class đặt tên là .animate-shake để gọi bên file code */
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}

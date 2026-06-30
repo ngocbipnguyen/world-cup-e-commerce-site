@@ -53,10 +53,41 @@ export function CheckoutModal({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
+    if (name === 'cardNumber') {
+    const onlyNums = value.replace(/\D/g, '')
+
+    if (onlyNums.length <= 16) {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: onlyNums, // Lưu chuỗi SỐ THUẦN (không dấu cách) vào State dữ liệu
+      }))
+    }
+  } else if (name === 'expiry') {
+    let onlyNums = value.replace(/\D/g, '').slice(0, 4) // Chỉ giữ lại số
+   
+    if (onlyNums.length <= 4) {
+      setFormData((prev) => ({ ...prev, [name]: onlyNums }))
+    }
+  } else if (name === 'cvc') {
+    const onlyNums = value.replace(/\D/g, '') // Chỉ giữ lại số
+    if (onlyNums.length <= 3) {
+      setFormData((prev) => ({ ...prev, [name]: onlyNums }))
+    }
+  } else if (name === 'phone') {
+  const onlyNums = value.replace(/\D/g, '')
+  const cleanNums = value.startsWith('(+1)') ? value.slice(4).replace(/\D/g, '') : onlyNums
+  if (cleanNums.length <= 10) {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: cleanNums 
+    }))
+  }
+  } else {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }))
+  }
   }
 
   const handleApplyPromo = () => {
@@ -66,7 +97,7 @@ export function CheckoutModal({
   const handleSubmitPayment = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsProcessing(true)
-    
+
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000))
       console.log('[v0] Payment submitted:', formData)
@@ -92,7 +123,7 @@ export function CheckoutModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl bg-[#0a0a0a] border-zinc-800 text-white p-0 overflow-hidden">
+      <DialogContent className="max-w-4xl bg-[#0a0a0a] border-zinc-800 text-white p-0 overflow-hidden animate-in fade-in-0 zoom-in-95 slide-in-from-bottom-10 duration-500 ease-[0.16,1,0.3,1] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-bottom-10 data-[state=closed]:duration-300">
         <DialogHeader className="border-b border-border pb-4">
           <div className="flex items-center gap-2">
             <Lock size={20} className="text-primary" />
@@ -147,11 +178,17 @@ export function CheckoutModal({
                   <Input
                     id="phone"
                     name="phone"
-                    type="tel"
-                    placeholder="+1 (555) 000-0000"
-                    value={formData.phone}
+                    placeholder="(+1) 123 456 789"
+                    value={
+                      formData.phone === '' 
+                      ? '' 
+                      : `(+1) ${formData.phone.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3').trim()}`
+                      }
                     onChange={handleInputChange}
                     required
+                    maxLength={16} 
+                    inputMode="numeric"
+                    className="w-full bg-[color:var(--input)] border rounded-lg px-4 py-3 text-[color:var(--foreground)] text-sm tracking-wide"
                   />
                 </div>
               </div>
@@ -191,9 +228,11 @@ export function CheckoutModal({
                         id="cardNumber"
                         name="cardNumber"
                         placeholder="1234 5678 9012 3456"
-                        value={formData.cardNumber}
+                        value={formData.cardNumber.replace(/(\d{4})/g, '$1 ').trim()}
                         onChange={handleInputChange}
                         required={paymentMethod === 'card'}
+                        maxLength={19}
+                        inputMode="numeric"
                       />
                     </div>
 
@@ -206,9 +245,11 @@ export function CheckoutModal({
                           id="expiry"
                           name="expiry"
                           placeholder="MM/YY"
-                          value={formData.expiry}
+                          value={formData.expiry.replace(/^(\d{2})/, '$1/').replace(/\/$/, '')}
                           onChange={handleInputChange}
                           required={paymentMethod === 'card'}
+                          maxLength={5}
+                          inputMode="numeric"
                         />
                       </div>
 
@@ -223,6 +264,8 @@ export function CheckoutModal({
                           value={formData.cvc}
                           onChange={handleInputChange}
                           required={paymentMethod === 'card'}
+                          maxLength={3}
+                          inputMode="numeric"
                         />
                       </div>
                     </div>

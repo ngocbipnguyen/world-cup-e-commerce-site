@@ -36,7 +36,7 @@ export function ProductCard({
   return (
     <div className="group bg-surface border border-border rounded-lg overflow-hidden hover:border-primary transition-all hover:shadow-xl hover:shadow-primary/20">
       {/* Image Container */}
-      <div className="relative overflow-hidden h-64 bg-surface-light group/image">
+      <div className="relative overflow-hidden h-64 bg-surface-light group/image"onClick={() => onQuickView && onQuickView(id)}>
         <img
           src={image}
           alt={`${team} ${kitType}`}
@@ -55,7 +55,7 @@ export function ProductCard({
         )}
 
         {/* Action Buttons Overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-colors flex items-center justify-center gap-3 opacity-0 group-hover/image:opacity-100 transition-opacity">
+        {/* <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-colors flex items-center justify-center gap-3 opacity-0 group-hover/image:opacity-100 transition-opacity">
           {onQuickView && (
             <button
               onClick={() => onQuickView(id)}
@@ -65,7 +65,7 @@ export function ProductCard({
               <Eye size={20} />
             </button>
           )}
-        </div>
+        </div> */}
 
         {/* Wishlist Button */}
         <button

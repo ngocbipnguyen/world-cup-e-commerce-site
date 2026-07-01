@@ -43,6 +43,7 @@ export function ProductQuickViewModal({
   const [quantity, setQuantity] = useState<number>(1)
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0)
   const [isLoading, setIsLoading] = useState(false)
+  const [activeImage, setActiveImage] = useState<string>(product.image)
 
   const handleAddToCart = async () => {
     setIsLoading(true)
@@ -59,7 +60,16 @@ export function ProductQuickViewModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl w-full p-0 bg-white border-0 rounded-lg overflow-hidden">
+      <DialogContent className="max-w-5xl w-full p-0 bg-white border-0 rounded-lg overflow-hidden animate-in
+        overflow-y-auto
+        scrollbar-thin
+        fade-in-0 zoom-in-95 slide-in-from-bottom-10 
+        duration-500 ease-[0.16,1,0.3,1] 
+        data-[state=closed]:animate-out 
+        data-[state=closed]:fade-out-0 
+        data-[state=closed]:zoom-out-95 
+        data-[state=closed]:slide-out-to-bottom-10 
+        data-[state=closed]:duration-300">
         <div className="relative grid grid-cols-1 md:grid-cols-2 gap-0">
           {/* Close Button */}
           <DialogClose className="absolute top-4 right-4 z-50 text-foreground hover:text-foreground/80 transition-colors">
@@ -72,7 +82,7 @@ export function ProductQuickViewModal({
             {/* Main Image */}
             <div className="flex-1 flex items-center justify-center mb-6 min-h-96 md:min-h-full">
               <img
-                src={THUMBNAIL_IMAGES[activeImageIndex]}
+                src={activeImage}
                 alt={`${product.team} ${product.kitType}`}
                 className="max-w-full max-h-full object-contain"
               />
@@ -83,9 +93,9 @@ export function ProductQuickViewModal({
               {THUMBNAIL_IMAGES.map((thumb, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setActiveImageIndex(idx)}
+                  onClick={() =>  setActiveImage(thumb)}
                   className={`w-16 h-16 rounded border-2 overflow-hidden transition-all ${
-                    activeImageIndex === idx
+                    activeImage === thumb
                       ? 'border-black'
                       : 'border-neutral-200 hover:border-neutral-300'
                   }`}

@@ -6,6 +6,7 @@ import { HeroSection } from '@/components/HeroSection'
 import { FilterSection } from '@/components/FilterSection'
 import { ProductCard } from '@/components/ProductCard'
 import { CartDrawer } from '@/components/CartDrawer'
+import { ProductQuickViewModal } from '@/components/ProductQuickViewModal'
 
 interface Product {
   id: string
@@ -112,6 +113,7 @@ const PRODUCTS: Product[] = [
 export default function Home() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [cartOpen, setCartOpen] = useState(false)
+  const [quickViewProductId, setQuickViewProductId] = useState<string | null>(null)
   const [filters, setFilters] = useState({
     group: '',
     continent: '',
@@ -196,6 +198,37 @@ export default function Home() {
     }))
   }
 
+  const quickViewProduct = PRODUCTS.find((p) => p.id === quickViewProductId)
+
+  const handleQuickViewAddToCart = (id: string, size: string, quantity: number) => {
+    const product = PRODUCTS.find((p) => p.id === id)
+    if (!product) return
+
+    const existingItem = cartItems.find((item) => item.id === id)
+
+    if (existingItem) {
+      setCartItems(
+        cartItems.map((item) =>
+          item.id === id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        )
+      )
+    } else {
+      setCartItems([
+        ...cartItems,
+        {
+          id,
+          team: product.team,
+          price: product.price,
+          size,
+          quantity,
+          image: product.image,
+        },
+      ])
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header cartCount={cartItems.length} onCartOpen={() => setCartOpen(true)} />
@@ -217,6 +250,7 @@ export default function Home() {
               key={product.id}
               {...product}
               onAddToCart={handleAddToCart}
+              onQuickView={setQuickViewProductId}
             />
           ))}
         </div>
@@ -282,6 +316,15 @@ export default function Home() {
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
       />
+
+      {quickViewProduct && (
+        <ProductQuickViewModal
+          isOpen={!!quickViewProductId}
+          onClose={() => setQuickViewProductId(null)}
+          product={quickViewProduct}
+          onAddToCart={handleQuickViewAddToCart}
+        />
+      )}
     </div>
   )
 }

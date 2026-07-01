@@ -1,6 +1,6 @@
 'use client'
 
-import { Heart, ShoppingCart, Star } from 'lucide-react'
+import { Heart, ShoppingCart, Star, Eye } from 'lucide-react'
 import { useState } from 'react'
 
 interface ProductCardProps {
@@ -14,6 +14,7 @@ interface ProductCardProps {
   reviews: number
   badge?: 'Sale' | 'New'
   onAddToCart: (id: string, quantity: number) => void
+  onQuickView?: (productId: string) => void
 }
 
 export function ProductCard({
@@ -27,6 +28,7 @@ export function ProductCard({
   reviews,
   badge,
   onAddToCart,
+  onQuickView,
 }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const discount = Math.round(((originalPrice - price) / originalPrice) * 100)
@@ -34,7 +36,7 @@ export function ProductCard({
   return (
     <div className="group bg-surface border border-border rounded-lg overflow-hidden hover:border-primary transition-all hover:shadow-xl hover:shadow-primary/20">
       {/* Image Container */}
-      <div className="relative overflow-hidden h-64 bg-surface-light">
+      <div className="relative overflow-hidden h-64 bg-surface-light group/image"onClick={() => onQuickView && onQuickView(id)}>
         <img
           src={image}
           alt={`${team} ${kitType}`}
@@ -52,10 +54,23 @@ export function ProductCard({
           </div>
         )}
 
+        {/* Action Buttons Overlay */}
+        {/* <div className="absolute inset-0 bg-black/0 group-hover/image:bg-black/20 transition-colors flex items-center justify-center gap-3 opacity-0 group-hover/image:opacity-100 transition-opacity">
+          {onQuickView && (
+            <button
+              onClick={() => onQuickView(id)}
+              className="p-3 bg-white rounded-full hover:bg-primary hover:text-primary-foreground text-foreground transition-all transform hover:scale-110"
+              aria-label="Quick View"
+            >
+              <Eye size={20} />
+            </button>
+          )}
+        </div> */}
+
         {/* Wishlist Button */}
         <button
           onClick={() => setIsWishlisted(!isWishlisted)}
-          className="absolute top-3 right-3 p-2 bg-surface/80 backdrop-blur rounded-full hover:bg-surface transition-colors"
+          className="absolute top-3 right-3 p-2 bg-surface/80 backdrop-blur rounded-full hover:bg-surface transition-colors z-10"
         >
           <Heart
             size={18}

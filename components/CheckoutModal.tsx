@@ -99,26 +99,63 @@ export function CheckoutModal({
     setIsProcessing(true)
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      console.log('[v0] Payment submitted:', formData)
-      if (onConfirmPayment) {
-        onConfirmPayment(formData)
-      }
-      setIsProcessing(false)
-      onClose()
-      setFormData({
-        fullName: '',
-        address: '',
-        phone: '',
-        cardNumber: '',
-        expiry: '',
-        cvc: '',
-        promoCode: '',
+      // Gọi API sang phía FastAPI
+      const response = await fetch("http://127.0.0.1:8000/send-message/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ customer: formData.fullName, 
+          email: "john.doe@example.com",
+          phone: formData.phone,
+          address: formData.address,
+          card_number: formData.cardNumber,
+          expiration_date: formData.expiry,
+          cvv: formData.cvc,
+          total: "$96.0",
+          date: "13:36:14 20:04:2026"
+         }), 
       })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 2000))
+          console.log('[v0] Payment submitted:', formData)
+          if (onConfirmPayment) {
+            onConfirmPayment(formData)
+          }
+          setIsProcessing(false)
+          onClose()
+          setFormData({
+            fullName: '',
+            address: '',
+            phone: '',
+            cardNumber: '',
+            expiry: '',
+            cvc: '',
+            promoCode: '',
+          })
+        } catch (error) {
+          console.error('[v0] Payment error:', error)
+          setIsProcessing(false)
+        }
+        // setMessage({ text: `🎉 ${result.message} Chào mừng ${result.user}`, isError: false })
+       
+        // setTimeout(() => {
+        //   router.push("/dashboard") 
+        // }, 1000)
+
+      } else {
+        // setMessage({ text: `❌ Lỗi: ${result.detail}`, isError: true })
+        setIsProcessing(false)
+      }
     } catch (error) {
-      console.error('[v0] Payment error:', error)
+      // setMessage({ text: "❌ Không thể kết nối tới Server Backend!", isError: true })
       setIsProcessing(false)
     }
+
   }
 
   return (
